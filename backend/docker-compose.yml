@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Banco de dados PostgreSQL
+  database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: jobify
+      POSTGRES_USER: jobify_user
+      POSTGRES_PASSWORD: jobify_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobify_user -d jobify"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Backend - DESENVOLVIMENTO
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://jobify_user:jobify_pass@database:5432/jobify
+      REMOTIVE_BASE: https://remotive.com/api
+      JWT_SECRET_KEY: dev-secret-key-only-for-development
+      FRONTEND_URL: http://localhost:3000
+      DEBUG: true
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - .:/app  # ✅ MANTIDO: Volume para desenvolvimento
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload"  # ✅ MANTIDO: --reload para desenvolvimento
+
+volumes:
+  postgres_data:

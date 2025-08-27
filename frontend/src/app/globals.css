@@ -1,0 +1,60 @@
+/* === Tailwind layers === */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Design tokens (CSS vars) === */
+:root {
+  --brand: 16 185 129;     /* emerald-500 (RGB) */
+  --brand-600: 5 150 105;  /* emerald-600       */
+  --bg: 250 250 250;       /* #FAFAFA           */
+  --fg: 17 24 39;          /* slate-900         */
+  --muted: 100 116 139;    /* slate-500         */
+  --card: 255 255 255;     /* white             */
+  --border: 229 231 235;   /* gray-200          */
+  --ring: 16 185 129;      /* brand             */
+}
+
+/* === Base reset === */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  color: rgb(var(--fg));
+  background: rgb(var(--bg));
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+/* vidro sutil para header/caixas */
+.glass {
+  background: color-mix(in oklab, white 90%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+/* skeleton shimmer */
+.skeleton { position: relative; overflow: hidden; background: #e5e7eb; border-radius: .75rem; }
+.skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+  animation: shimmer 1.1s infinite;
+}
+@keyframes shimmer { 100% { transform: translateX(100%);} }
+
+/* links básicos */
+a { text-decoration: none; color: inherit; }
+
+/* === Component utilities com @apply (v3) === */
+@layer components {
+  .card { @apply rounded-xl border border-border bg-white p-4 shadow-thin; }
+
+  .chip { @apply px-3 py-1 rounded-lg border border-border text-sm transition hover:bg-black/5; }
+  .chip--active { @apply bg-brand text-white border-transparent; }
+
+  .btn { @apply inline-flex items-center gap-2 px-3 py-2 rounded-lg border font-semibold transition; }
+  .btn--brand { @apply bg-brand text-white border-transparent hover:opacity-90; }
+  .btn--outline { @apply border-border hover:bg-black/5; }
+  .btn--ghost { @apply border-transparent hover:bg-black/5; }
+
+  .link { @apply text-brand hover:text-brand-600; }
+}
